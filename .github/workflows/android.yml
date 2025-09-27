@@ -48,7 +48,7 @@ jobs:
       # 设置gradle环境(比如: 6.5)、打包命令
       - uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 8.13.0
+          gradle-version: 8.13
           arguments: assembleRelease
 
       # 签名apk
