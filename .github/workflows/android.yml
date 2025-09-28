@@ -50,7 +50,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 8.13
-          arguments: assembleRelease
+          
 
       
       - name: Build Debug APK
