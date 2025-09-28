@@ -52,38 +52,21 @@ jobs:
           gradle-version: 8.13
           arguments: assembleRelease
 
-      # 签名apk
-      - uses: r0adkll/sign-android-release@v1
-        name: Sign app APK
-        id: sign_app
+      
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+ 
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
         with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        # 还能设置build-tools version，29.0.3好像不支持了
-        env:
-          # override default build-tools version (29.0.3) -- optional
-          BUILD_TOOLS_VERSION: "36.0.0"
+         name: app-debug
+         path: app/build/outputs/apk/debug/app-debug.apk
 
-      # build-tools可能不存在，用step查看下支持哪些
-      - run: ls /usr/local/lib/android/sdk/build-tools/
-
-      # 重命名apk
-      # GITHUB_REF_NAME是“触发workflow的分支或tag名称”
-      - run: mv ${{steps.sign_app.outputs.signedReleaseFile}} fundark_$GITHUB_REF_NAME.apk
-        # 可以指定shell命令的执行目录
-        # working-directory: ./temp
-        # 只当shell的类型
-        # shell: bash
-
-      # 发布
-      - uses: ncipollo/release-action@v1
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
         with:
-          # 要包含到Release Assets中的文件
-          artifacts: "*.apk"
-          # 会使用一个临时的token来创建Release
-          token: ${{ github.token }}
-          # 自动生成一些变化列表之类的内容。
-          generateReleaseNotes: true
+         name: app-release
+         path: app/build/outputs/apk/release/app-release-unsigned.apk
